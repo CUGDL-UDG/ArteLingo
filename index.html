@@ -70,18 +70,18 @@
                     <div>
                         <h2 class="text-2xl font-bold text-slate-800 mb-4">Artes Visuales</h2>
                         <div class="space-y-4">
-                            <div id="start-lesson-card" class="lesson-card bg-white p-6 rounded-2xl shadow-md cursor-pointer flex items-center space-x-4">
+                            <div id="start-fundamentals-lesson-card" class="lesson-card bg-white p-6 rounded-2xl shadow-md cursor-pointer flex items-center space-x-4">
                                 <div class="text-4xl">🎨</div>
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-800">Fundamentos del Arte</h3>
                                     <p class="text-slate-600">Una introducción a los artistas y obras más famosas.</p>
                                 </div>
                             </div>
-                            <div class="lesson-card bg-white p-6 rounded-2xl shadow-md flex items-center space-x-4 disabled">
+                            <div id="start-movements-lesson-card" class="lesson-card bg-white p-6 rounded-2xl shadow-md cursor-pointer flex items-center space-x-4">
                                 <div class="text-4xl">🏛️</div>
                                 <div>
                                     <h3 class="font-bold text-lg text-slate-800">Movimientos Artísticos</h3>
-                                    <p class="text-slate-600">Del Renacimiento al Surrealismo. <span class="text-teal-500 font-semibold text-sm">(Próximamente)</span></p>
+                                    <p class="text-slate-600">Del Renacimiento al Surrealismo.</p>
                                 </div>
                             </div>
                         </div>
@@ -201,13 +201,21 @@
     </nav>
     
     <script>
-        // --- DATOS DE LA LECCIÓN ---
-        const lessonData = [
+        // --- DATOS DE LAS LECCIONES ---
+        const fundamentalsLessonData = [
             { question: "¿Quién pintó 'La Noche Estrellada'?", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", options: ["Claude Monet", "Vincent van Gogh", "Pablo Picasso", "Salvador Dalí"], correctAnswer: "Vincent van Gogh", explanation: "'La Noche Estrellada' es una de las obras más famosas del pintor postimpresionista neerlandés Vincent van Gogh, creada en 1889." },
             { question: "¿A qué movimiento artístico pertenece 'La Persistencia de la Memoria'?", imageUrl: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg", options: ["Cubismo", "Impresionismo", "Surrealismo", "Barroco"], correctAnswer: "Surrealismo", explanation: "Esta icónica obra de 1931 de Salvador Dalí es una de las piezas más representativas del movimiento surrealista." },
             { question: "Identifica al artista de 'El Grito'.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg", options: ["Edvard Munch", "Francisco de Goya", "Gustav Klimt", "René Magritte"], correctAnswer: "Edvard Munch", explanation: "'El Grito' es la obra más famosa del pintor noruego Edvard Munch y se considera un ícono del expresionismo." },
             { question: "¿Quién es el autor de esta escultura de 'David'?", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Michelangelo%27s_David_2015.jpg/800px-Michelangelo%27s_David_2015.jpg", options: ["Donatello", "Leonardo da Vinci", "Rafael", "Miguel Ángel"], correctAnswer: "Miguel Ángel", explanation: "Esta obra maestra del Renacimiento fue esculpida en mármol por el artista italiano Miguel Ángel entre 1501 y 1504." },
             { question: "¿Cómo se llama esta famosa pintura de Leonardo da Vinci?", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg", options: ["La Dama del Armiño", "La Gioconda (Mona Lisa)", "La Virgen de las Rocas", "Ginebra de Benci"], correctAnswer: "La Gioconda (Mona Lisa)", explanation: "También conocida como Mona Lisa, La Gioconda es el retrato más famoso del mundo, pintado por Leonardo da Vinci en el siglo XVI." }
+        ];
+        
+        const artMovementsLessonData = [
+            { question: "Este dibujo, 'El Hombre de Vitruvio', es un ícono del...", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Da_Vinci_Vitruve_Luc_Viatour.jpg/800px-Da_Vinci_Vitruve_Luc_Viatour.jpg", options: ["Barroco", "Renacimiento", "Gótico", "Rococó"], correctAnswer: "Renacimiento", explanation: "El Hombre de Vitruvio de Leonardo da Vinci es un estudio de las proporciones del cuerpo humano y un símbolo del humanismo renacentista." },
+            { question: "'Impresión, sol naciente' de Claude Monet dio nombre al movimiento...", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Monet_-_Impression%2C_Sunrise.jpg/1280px-Monet_-_Impression%2C_Sunrise.jpg", options: ["Expresionismo", "Fauvismo", "Impresionismo", "Puntillismo"], correctAnswer: "Impresionismo", explanation: "Esta obra de 1872 fue la que, de forma un tanto peyorativa por un crítico, bautizó al movimiento impresionista, enfocado en capturar la luz y el instante." },
+            { question: "El uso dramático de la luz y la sombra (claroscuro) en 'La vocación de San Mateo' es característico del...", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1e/Caravaggio_-_La_vocazione_di_San_Matteo.jpg/1280px-Caravaggio_-_La_vocazione_di_San_Matteo.jpg", options: ["Neoclasicismo", "Manierismo", "Barroco", "Romanticismo"], correctAnswer: "Barroco", explanation: "Caravaggio fue un maestro del Barroco, y su técnica del tenebrismo (un uso extremo del claroscuro) influyó a generaciones de artistas." },
+            { question: "La fragmentación de formas y las múltiples perspectivas en 'Guernica' son sellos distintivos del...", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/0/0b/GUERNICA-PICASSO.jpg", options: ["Surrealismo", "Dadaísmo", "Futurismo", "Cubismo"], correctAnswer: "Cubismo", explanation: "Pintado por Pablo Picasso, 'Guernica' es una de las obras cubistas más importantes y un poderoso manifiesto contra la guerra." },
+            { question: "Las 'Latas de sopa Campbell' de Andy Warhol son un ejemplo icónico del...", imageUrl: "https://upload.wikimedia.org/wikipedia/en/thumb/3/3a/Warhol-Campbell_Soup-1-screenprint-1968.jpg/1024px-Warhol-Campbell_Soup-1-screenprint-1968.jpg", options: ["Arte Pop", "Minimalismo", "Op Art", "Hiperrealismo"], correctAnswer: "Arte Pop", explanation: "El Arte Pop (Pop Art) de los años 60, con Warhol a la cabeza, utilizaba imágenes de la cultura popular y de consumo masivo para cuestionar los límites del arte." },
         ];
 
         const friendsData = [
@@ -220,6 +228,7 @@
         // --- ESTADO DE LA APP ---
         let currentQuestionIndex = 0;
         let score = 0;
+        let activeLessonData = [];
         let userProfile = {
             name: "Aprendiz de Arte",
             xp: 40,
@@ -238,7 +247,8 @@
         };
         
         const navButtons = document.querySelectorAll('.nav-button');
-        const startLessonCard = document.getElementById('start-lesson-card');
+        const startFundamentalsLessonCard = document.getElementById('start-fundamentals-lesson-card');
+        const startMovementsLessonCard = document.getElementById('start-movements-lesson-card');
         
         // Perfil
         const profileName = document.getElementById('profile-name');
@@ -283,7 +293,6 @@
         
         function renderFriendsList() {
             friendsList.innerHTML = '';
-            // Ordenar amigos por puntuación
             const sortedFriends = friendsData.sort((a, b) => b.score - a.score);
             
             sortedFriends.forEach((friend, index) => {
@@ -304,18 +313,17 @@
         function checkLevelUp() {
             if (userProfile.xp >= userProfile.xpToNextLevel) {
                 userProfile.level++;
-                userProfile.xp = userProfile.xp - userProfile.xpToNextLevel; // Corregido el error tipográfico
-                userProfile.xpToNextLevel = Math.floor(userProfile.xpToNextLevel * 1.5); // Aumenta la dificultad
-                // Podríamos añadir una notificación de subida de nivel aquí
+                userProfile.xp = userProfile.xp - userProfile.xpToNextLevel;
+                userProfile.xpToNextLevel = Math.floor(userProfile.xpToNextLevel * 1.5);
             }
         }
         
         function loadQuestion() {
             feedbackContainer.classList.add('hidden');
             
-            const currentQuestion = lessonData[currentQuestionIndex];
+            const currentQuestion = activeLessonData[currentQuestionIndex];
             
-            const progress = ((currentQuestionIndex) / lessonData.length) * 100;
+            const progress = ((currentQuestionIndex) / activeLessonData.length) * 100;
             progressBar.style.width = `${progress}%`;
 
             questionTitle.textContent = currentQuestion.question;
@@ -359,11 +367,10 @@
             const feedbackTitle = document.getElementById('feedback-title');
             const feedbackExplanation = document.getElementById('feedback-explanation');
             const nextButton = document.getElementById('next-button');
-            const currentQuestion = lessonData[currentQuestionIndex];
+            const currentQuestion = activeLessonData[currentQuestionIndex];
 
             feedbackContainer.classList.remove('hidden');
             
-            // Forzar reflow para reiniciar la animación
             feedbackContainer.classList.remove('feedback-container-enter-active', 'feedback-container-enter-from', 'feedback-container-enter-to');
             void feedbackContainer.offsetWidth;
 
@@ -382,7 +389,6 @@
             }
             feedbackExplanation.textContent = currentQuestion.explanation;
 
-            // Iniciar la animación
              setTimeout(() => {
                 feedbackContainer.classList.add('feedback-container-enter-active', 'feedback-container-enter-from');
                 requestAnimationFrame(() => {
@@ -393,7 +399,7 @@
 
         function nextQuestion() {
             currentQuestionIndex++;
-            if (currentQuestionIndex < lessonData.length) {
+            if (currentQuestionIndex < activeLessonData.length) {
                 loadQuestion();
             } else {
                 showCompletionScreen();
@@ -410,10 +416,11 @@
             checkLevelUp();
             
             xpGainedText.textContent = `¡+${xpGained} XP!`;
-            finalScore.textContent = `${score} / ${lessonData.length}`;
+            finalScore.textContent = `${score} / ${activeLessonData.length}`;
         }
         
-        function startLesson() {
+        function startLesson(lessonData) {
+            activeLessonData = lessonData;
             currentQuestionIndex = 0;
             score = 0;
             completionScreen.classList.add('hidden');
@@ -429,8 +436,10 @@
             });
         });
         
-        startLessonCard.addEventListener('click', startLesson);
-        document.getElementById('restart-button').addEventListener('click', startLesson);
+        startFundamentalsLessonCard.addEventListener('click', () => startLesson(fundamentalsLessonData));
+        startMovementsLessonCard.addEventListener('click', () => startLesson(artMovementsLessonData));
+        
+        document.getElementById('restart-button').addEventListener('click', () => startLesson(activeLessonData));
         document.getElementById('next-button').addEventListener('click', ()=>nextQuestion());
         document.getElementById('back-to-home-button').addEventListener('click', () => showTab('lessons'));
         document.getElementById('home-button').addEventListener('click', () => showTab('lessons'));
