@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ArteLingo - Demo de Arte</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            touch-action: manipulation;
+            padding-bottom: 80px; /* Space for the bottom nav */
+        }
+        .option-button, .lesson-card {
+            transition: all 0.2s ease-in-out;
+        }
+        .option-button:hover, .lesson-card:not(.disabled):hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .correct {
+            background-color: #22c55e !important; /* green-500 */
+            border-color: #16a34a !important; /* green-600 */
+            color: white !important;
+        }
+        .incorrect {
+            background-color: #ef4444 !important; /* red-500 */
+            border-color: #dc2626 !important; /* red-600 */
+            color: white !important;
+        }
+        .feedback-container-enter-active {
+            transition: transform 0.3s ease-out, opacity 0.3s ease-out;
+        }
+        .feedback-container-enter-from {
+            opacity: 0;
+            transform: translateY(100%);
+        }
+        .feedback-container-enter-to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .nav-button.active-nav {
+            color: #0d9488; /* teal-600 */
+        }
+        .xp-bar-progress {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-slate-100">
+
+    <div id="app-container" class="w-full max-w-2xl mx-auto py-8 px-4">
+        
+        <!-- Contenedor Principal de Pestañas -->
+        <div id="main-content">
+            <!-- Pestaña de Lecciones -->
+            <div id="lessons-tab">
+                <header class="text-center mb-8">
+                    <h1 class="text-5xl font-black text-teal-600">ArteLingo</h1>
+                    <p class="text-slate-500 mt-2">Expande tu conocimiento artístico</p>
+                </header>
+                <main class="space-y-8">
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Artes Visuales</h2>
+                        <div class="space-y-4">
+                            <div id="start-lesson-card" class="lesson-card bg-white p-6 rounded-2xl shadow-md cursor-pointer flex items-center space-x-4">
+                                <div class="text-4xl">🎨</div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800">Fundamentos del Arte</h3>
+                                    <p class="text-slate-600">Una introducción a los artistas y obras más famosas.</p>
+                                </div>
+                            </div>
+                            <div class="lesson-card bg-white p-6 rounded-2xl shadow-md flex items-center space-x-4 disabled">
+                                <div class="text-4xl">🏛️</div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800">Movimientos Artísticos</h3>
+                                    <p class="text-slate-600">Del Renacimiento al Surrealismo. <span class="text-teal-500 font-semibold text-sm">(Próximamente)</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                     <div>
+                        <h2 class="text-2xl font-bold text-slate-800 mb-4">Música</h2>
+                        <div class="space-y-4">
+                            <div class="lesson-card bg-white p-6 rounded-2xl shadow-md flex items-center space-x-4 disabled">
+                                <div class="text-4xl">🎵</div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800">Teoría Musical Básica</h3>
+                                    <p class="text-slate-600">Aprende sobre notas y escalas. <span class="text-teal-500 font-semibold text-sm">(Próximamente)</span></p>
+                                </div>
+                            </div>
+                            <div class="lesson-card bg-white p-6 rounded-2xl shadow-md flex items-center space-x-4 disabled">
+                                <div class="text-4xl">🎼</div>
+                                <div>
+                                    <h3 class="font-bold text-lg text-slate-800">Solfeo para Principiantes</h3>
+                                    <p class="text-slate-600">Entrena tu oído y lectura musical. <span class="text-teal-500 font-semibold text-sm">(Próximamente)</span></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+
+            <!-- Pestaña de Perfil -->
+            <div id="profile-tab" class="hidden">
+                <header class="text-center mb-8">
+                    <h1 class="text-3xl font-bold text-slate-800">Mi Perfil</h1>
+                </header>
+                <main class="space-y-8">
+                    <!-- Tarjeta de Perfil -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md">
+                        <div class="flex items-center space-x-4 mb-4">
+                            <div class="text-5xl bg-slate-200 p-3 rounded-full">👤</div>
+                            <div>
+                                <h2 id="profile-name" class="text-2xl font-bold text-slate-800"></h2>
+                                <p id="profile-level" class="text-slate-500 font-semibold"></p>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-medium text-slate-600 mb-1">Progreso de Nivel</p>
+                            <div class="w-full bg-slate-200 rounded-full h-4">
+                                <div id="xp-bar" class="xp-bar-progress bg-teal-500 h-4 rounded-full" style="width: 0%"></div>
+                            </div>
+                            <p id="xp-text" class="text-right text-sm text-slate-500 mt-1"></p>
+                        </div>
+                    </div>
+                    <!-- Tarjeta de Amigos / Clasificación -->
+                    <div class="bg-white p-6 rounded-2xl shadow-md">
+                        <h3 class="text-xl font-bold text-slate-800 mb-4">Clasificación de Amigos</h3>
+                        <ul id="friends-list" class="space-y-4">
+                           <!-- Amigos se generan aquí -->
+                        </ul>
+                    </div>
+                </main>
+            </div>
+        </div>
+
+        <!-- Pantalla de Lección -->
+        <div id="lesson-screen" class="hidden">
+            <div class="flex items-center gap-4 mb-4">
+                <button id="back-to-home-button" class="text-slate-500 hover:text-slate-800">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+                <div class="w-full bg-slate-200 rounded-full h-4">
+                    <div id="progress-bar" class="bg-teal-500 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+            <div id="question-content" class="bg-white p-6 rounded-2xl shadow-md">
+                <h2 id="question-title" class="text-xl md:text-2xl font-bold text-slate-800 mb-4"></h2>
+                <div class="mb-4">
+                    <img id="question-image" src="" alt="Obra de arte" class="rounded-xl w-full max-h-96 object-contain mx-auto shadow-sm" onerror="this.onerror=null;this.src='https://placehold.co/600x400/e2e8f0/64748b?text=Arte';">
+                </div>
+                <div id="options-container" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+            </div>
+        </div>
+
+        <!-- Pantalla de Finalización -->
+        <div id="completion-screen" class="hidden text-center bg-white p-8 rounded-2xl shadow-lg">
+            <h1 class="text-4xl font-bold text-teal-600 mb-2">¡Lección Completada!</h1>
+            <p id="xp-gained-text" class="text-2xl font-bold text-amber-500 mb-4"></p>
+            <p class="text-slate-600 text-lg mb-6">Tu puntuación final es:</p>
+            <div id="final-score" class="text-6xl font-bold text-slate-800 mb-8"></div>
+            <div class="space-y-3">
+                <button id="restart-button" class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-4 rounded-2xl text-xl shadow-md hover:shadow-lg transition-transform transform hover:-translate-y-1">Volver a Intentar</button>
+                <button id="home-button" class="w-full bg-slate-200 hover:bg-slate-300 text-slate-800 font-bold py-4 px-4 rounded-2xl text-xl">Volver al Inicio</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenedor de Feedback -->
+    <div id="feedback-container" class="fixed bottom-0 left-0 right-0 p-4 hidden z-20">
+        <div id="feedback-card" class="max-w-2xl mx-auto p-5 rounded-t-2xl shadow-2xl transition-transform duration-300">
+            <div class="flex items-center mb-3">
+                <div id="feedback-icon" class="mr-3 text-2xl"></div>
+                <h3 id="feedback-title" class="text-2xl font-bold"></h3>
+            </div>
+            <p id="feedback-explanation" class="text-md mb-4"></p>
+            <button id="next-button" class="w-full text-white font-bold py-3 px-4 rounded-xl text-lg">Continuar</button>
+        </div>
+    </div>
+
+    <!-- Barra de Navegación Inferior -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-2px_10px_rgba(0,0,0,0.1)] z-10">
+        <div class="flex justify-around max-w-2xl mx-auto">
+            <button data-tab="lessons" class="nav-button flex-1 flex flex-col items-center p-3 text-slate-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" /></svg>
+                <span class="text-xs font-medium">Lecciones</span>
+            </button>
+            <button data-tab="profile" class="nav-button flex-1 flex flex-col items-center p-3 text-slate-500 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd" /></svg>
+                <span class="text-xs font-medium">Perfil</span>
+            </button>
+        </div>
+    </nav>
+    
+    <script>
+        // --- DATOS DE LA LECCIÓN ---
+        const lessonData = [
+            { question: "¿Quién pintó 'La Noche Estrellada'?", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg/1280px-Van_Gogh_-_Starry_Night_-_Google_Art_Project.jpg", options: ["Claude Monet", "Vincent van Gogh", "Pablo Picasso", "Salvador Dalí"], correctAnswer: "Vincent van Gogh", explanation: "'La Noche Estrellada' es una de las obras más famosas del pintor postimpresionista neerlandés Vincent van Gogh, creada en 1889." },
+            { question: "¿A qué movimiento artístico pertenece 'La Persistencia de la Memoria'?", imageUrl: "https://upload.wikimedia.org/wikipedia/en/d/dd/The_Persistence_of_Memory.jpg", options: ["Cubismo", "Impresionismo", "Surrealismo", "Barroco"], correctAnswer: "Surrealismo", explanation: "Esta icónica obra de 1931 de Salvador Dalí es una de las piezas más representativas del movimiento surrealista." },
+            { question: "Identifica al artista de 'El Grito'.", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg/800px-Edvard_Munch%2C_1893%2C_The_Scream%2C_oil%2C_tempera_and_pastel_on_cardboard%2C_91_x_73_cm%2C_National_Gallery_of_Norway.jpg", options: ["Edvard Munch", "Francisco de Goya", "Gustav Klimt", "René Magritte"], correctAnswer: "Edvard Munch", explanation: "'El Grito' es la obra más famosa del pintor noruego Edvard Munch y se considera un ícono del expresionismo." },
+            { question: "¿Quién es el autor de esta escultura de 'David'?", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Michelangelo%27s_David_2015.jpg/800px-Michelangelo%27s_David_2015.jpg", options: ["Donatello", "Leonardo da Vinci", "Rafael", "Miguel Ángel"], correctAnswer: "Miguel Ángel", explanation: "Esta obra maestra del Renacimiento fue esculpida en mármol por el artista italiano Miguel Ángel entre 1501 y 1504." },
+            { question: "¿Cómo se llama esta famosa pintura de Leonardo da Vinci?", imageUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ec/Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg/800px-Mona_Lisa%2C_by_Leonardo_da_Vinci%2C_from_C2RMF_retouched.jpg", options: ["La Dama del Armiño", "La Gioconda (Mona Lisa)", "La Virgen de las Rocas", "Ginebra de Benci"], correctAnswer: "La Gioconda (Mona Lisa)", explanation: "También conocida como Mona Lisa, La Gioconda es el retrato más famoso del mundo, pintado por Leonardo da Vinci en el siglo XVI." }
+        ];
+
+        const friendsData = [
+            { name: "Miguel C.", score: 1250, avatar: '🧑🏻' },
+            { name: "Sofía R.", score: 980, avatar: '👩🏼' },
+            { name: "Carlos V.", score: 720, avatar: '👨🏽' },
+            { name: "Ana G.", score: 510, avatar: '👩🏻' },
+        ];
+
+        // --- ESTADO DE LA APP ---
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let userProfile = {
+            name: "Aprendiz de Arte",
+            xp: 40,
+            level: 1,
+            xpToNextLevel: 100,
+        };
+
+        // --- SELECTORES DE ELEMENTOS DEL DOM ---
+        const mainContent = document.getElementById('main-content');
+        const lessonScreen = document.getElementById('lesson-screen');
+        const completionScreen = document.getElementById('completion-screen');
+
+        const tabScreens = {
+            lessons: document.getElementById('lessons-tab'),
+            profile: document.getElementById('profile-tab')
+        };
+        
+        const navButtons = document.querySelectorAll('.nav-button');
+        const startLessonCard = document.getElementById('start-lesson-card');
+        
+        // Perfil
+        const profileName = document.getElementById('profile-name');
+        const profileLevel = document.getElementById('profile-level');
+        const xpBar = document.getElementById('xp-bar');
+        const xpText = document.getElementById('xp-text');
+        const friendsList = document.getElementById('friends-list');
+        const xpGainedText = document.getElementById('xp-gained-text');
+        const optionsContainer = document.getElementById('options-container');
+        const questionTitle = document.getElementById('question-title');
+        const questionImage = document.getElementById('question-image');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScore = document.getElementById('final-score');
+        const feedbackContainer = document.getElementById('feedback-container');
+
+        // --- LÓGICA DE LA APP ---
+        
+        function showTab(tabId) {
+            mainContent.classList.remove('hidden');
+            lessonScreen.classList.add('hidden');
+            completionScreen.classList.add('hidden');
+            
+            Object.values(tabScreens).forEach(screen => screen.classList.add('hidden'));
+            tabScreens[tabId].classList.remove('hidden');
+
+            navButtons.forEach(button => {
+                button.classList.toggle('active-nav', button.dataset.tab === tabId);
+            });
+
+            if (tabId === 'profile') {
+                updateProfileUI();
+            }
+        }
+        
+        function updateProfileUI() {
+            profileName.textContent = userProfile.name;
+            profileLevel.textContent = `Nivel ${userProfile.level}`;
+            const progressPercentage = (userProfile.xp / userProfile.xpToNextLevel) * 100;
+            xpBar.style.width = `${progressPercentage}%`;
+            xpText.textContent = `${userProfile.xp} / ${userProfile.xpToNextLevel} XP`;
+        }
+        
+        function renderFriendsList() {
+            friendsList.innerHTML = '';
+            // Ordenar amigos por puntuación
+            const sortedFriends = friendsData.sort((a, b) => b.score - a.score);
+            
+            sortedFriends.forEach((friend, index) => {
+                const li = document.createElement('li');
+                li.className = 'flex items-center justify-between';
+                li.innerHTML = `
+                    <div class="flex items-center space-x-3">
+                        <span class="font-bold text-slate-500">${index + 1}</span>
+                        <div class="text-3xl bg-slate-200 p-2 rounded-full">${friend.avatar}</div>
+                        <span class="font-semibold text-slate-700">${friend.name}</span>
+                    </div>
+                    <span class="font-bold text-teal-600">${friend.score} pts</span>
+                `;
+                friendsList.appendChild(li);
+            });
+        }
+
+        function checkLevelUp() {
+            if (userProfile.xp >= userProfile.xpToNextLevel) {
+                userProfile.level++;
+                userProfile.xp = userProfile.xp - userProfile.xpToNextLevel; // Corregido el error tipográfico
+                userProfile.xpToNextLevel = Math.floor(userProfile.xpToNextLevel * 1.5); // Aumenta la dificultad
+                // Podríamos añadir una notificación de subida de nivel aquí
+            }
+        }
+        
+        function loadQuestion() {
+            feedbackContainer.classList.add('hidden');
+            
+            const currentQuestion = lessonData[currentQuestionIndex];
+            
+            const progress = ((currentQuestionIndex) / lessonData.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            questionTitle.textContent = currentQuestion.question;
+            questionImage.src = currentQuestion.imageUrl;
+            optionsContainer.innerHTML = '';
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement('button');
+                button.textContent = option;
+                button.classList.add('option-button', 'w-full', 'text-left', 'p-4', 'border-2', 'border-slate-200', 'rounded-xl', 'text-slate-700', 'font-medium', 'bg-white', 'hover:bg-slate-50');
+                button.onclick = (event) => selectAnswer(event.target, option, currentQuestion.correctAnswer);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function selectAnswer(button, selectedAnswer, correctAnswer) {
+            const isCorrect = selectedAnswer === correctAnswer;
+            Array.from(optionsContainer.children).forEach(btn => {
+                btn.disabled = true;
+                if (btn.textContent !== correctAnswer) btn.classList.add('opacity-50');
+            });
+
+            if (isCorrect) {
+                score++;
+                button.classList.add('correct');
+                showFeedback(true);
+            } else {
+                button.classList.add('incorrect');
+                const correctButton = Array.from(optionsContainer.children).find(btn => btn.textContent === correctAnswer);
+                if (correctButton) {
+                    correctButton.classList.add('correct');
+                    correctButton.classList.remove('opacity-50');
+                }
+                showFeedback(false);
+            }
+        }
+        
+        function showFeedback(isCorrect) {
+            const feedbackCard = document.getElementById('feedback-card');
+            const feedbackIcon = document.getElementById('feedback-icon');
+            const feedbackTitle = document.getElementById('feedback-title');
+            const feedbackExplanation = document.getElementById('feedback-explanation');
+            const nextButton = document.getElementById('next-button');
+            const currentQuestion = lessonData[currentQuestionIndex];
+
+            feedbackContainer.classList.remove('hidden');
+            
+            // Forzar reflow para reiniciar la animación
+            feedbackContainer.classList.remove('feedback-container-enter-active', 'feedback-container-enter-from', 'feedback-container-enter-to');
+            void feedbackContainer.offsetWidth;
+
+            if (isCorrect) {
+                feedbackCard.style.backgroundColor = '#dcfce7';
+                feedbackTitle.textContent = "¡Correcto!";
+                feedbackTitle.style.color = '#16a34a';
+                feedbackIcon.textContent = '✅';
+                nextButton.style.backgroundColor = '#22c55e';
+            } else {
+                feedbackCard.style.backgroundColor = '#fee2e2';
+                feedbackTitle.textContent = "Respuesta incorrecta";
+                feedbackTitle.style.color = '#dc2626';
+                feedbackIcon.textContent = '❌';
+                nextButton.style.backgroundColor = '#ef4444';
+            }
+            feedbackExplanation.textContent = currentQuestion.explanation;
+
+            // Iniciar la animación
+             setTimeout(() => {
+                feedbackContainer.classList.add('feedback-container-enter-active', 'feedback-container-enter-from');
+                requestAnimationFrame(() => {
+                     feedbackContainer.classList.add('feedback-container-enter-to');
+                });
+            }, 10);
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < lessonData.length) {
+                loadQuestion();
+            } else {
+                showCompletionScreen();
+            }
+        }
+        
+        function showCompletionScreen() {
+            lessonScreen.classList.add('hidden');
+            feedbackContainer.classList.add('hidden');
+            completionScreen.classList.remove('hidden');
+            
+            const xpGained = score * 25;
+            userProfile.xp += xpGained;
+            checkLevelUp();
+            
+            xpGainedText.textContent = `¡+${xpGained} XP!`;
+            finalScore.textContent = `${score} / ${lessonData.length}`;
+        }
+        
+        function startLesson() {
+            currentQuestionIndex = 0;
+            score = 0;
+            completionScreen.classList.add('hidden');
+            mainContent.classList.add('hidden');
+            lessonScreen.classList.remove('hidden');
+            loadQuestion();
+        }
+
+        // --- EVENT LISTENERS ---
+        navButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                showTab(button.dataset.tab);
+            });
+        });
+        
+        startLessonCard.addEventListener('click', startLesson);
+        document.getElementById('restart-button').addEventListener('click', startLesson);
+        document.getElementById('next-button').addEventListener('click', ()=>nextQuestion());
+        document.getElementById('back-to-home-button').addEventListener('click', () => showTab('lessons'));
+        document.getElementById('home-button').addEventListener('click', () => showTab('lessons'));
+
+
+        // --- INICIALIZACIÓN ---
+        showTab('lessons');
+        renderFriendsList();
+
+    </script>
+</body>
+</html>
